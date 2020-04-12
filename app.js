@@ -5,7 +5,7 @@ const todoList = document.querySelector(".todo-list");
 const filterOption = document.querySelector(".filter-todo");
 
 // EVENT LISTENERS
-document.addEventListener("DOMContentLoaded", getTodoArray); // loading local storage
+document.addEventListener("DOMContentLoaded", loadLocalStorage); // loading local storage
 todoButton.addEventListener("click", addTodo);
 todoList.addEventListener("click", deleteCheck);
 filterOption.addEventListener("change", filterTodo);
@@ -68,6 +68,8 @@ function deleteCheck(event) {
   if (item.classList[0] === "complete-btn") {
     const todo = item.parentElement;
     todo.classList.toggle("completed");
+    saveProgress(todo);
+    removeLocalTodo(todo);
   }
 }
 
@@ -80,6 +82,7 @@ function filterTodo(e) {
         todo.style.display = "flex"; // i.e. set css to display
         break;
       case "Completed":
+        console.log(todo.classList);
         if (todo.classList.contains("completed")) {
           todo.style.display = "flex";
         } else {
@@ -97,7 +100,7 @@ function filterTodo(e) {
   });
 }
 
-// storing todos in local storage
+// storing unchecked in local storage
 function saveLocalTodoArray(todo) {
   // Check if I have existing todos in local storage
   let todoArray;
@@ -112,13 +115,19 @@ function saveLocalTodoArray(todo) {
   localStorage.setItem("todoArray", JSON.stringify(todoArray));
 }
 
-function getTodoArray() {
+// load both unchecked and checked items
+function loadLocalStorage() {
   // Check if I have existing todos in local storage
   let todoArray;
   if (localStorage.getItem("todoArray") === null) {
     todoArray = []; // if we don't have it, create a local array
   } else {
+    // loading local arrays
     todoArray = JSON.parse(localStorage.getItem("todoArray"));
+    progressArray = JSON.parse(localStorage.getItem("progressArray"));
+
+    // Defining Array of unfinished items
+
     todoArray.forEach((localTodoItem) => {
       // generating div
       const todoDiv = document.createElement("div");
@@ -145,6 +154,34 @@ function getTodoArray() {
       // append my div to the existing list in the html (i.e. under <ul>)
       todoList.appendChild(todoDiv);
     });
+
+    progressArray.forEach((localTodoItem) => {
+      // generating div
+      const todoDiv = document.createElement("div");
+      todoDiv.classList.add("todo");
+
+      // generating LI
+      const newTodo = document.createElement("li");
+      newTodo.innerText = localTodoItem; // not sure what I am doing here
+      newTodo.classList.add("todo-item");
+      newTodo.classList.toggle("completed");
+      todoDiv.appendChild(newTodo); // appending the list under the todo div
+
+      // generate check mark button
+      const completedButton = document.createElement("button");
+      completedButton.innerHTML = '<i class="fas fa-check-circle"></i>';
+      completedButton.classList.add("complete-btn");
+      todoDiv.appendChild(completedButton);
+
+      // generate a delete button
+      const trashButton = document.createElement("button");
+      trashButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+      trashButton.classList.add("trash-btn");
+      todoDiv.appendChild(trashButton);
+
+      // append my div to the existing list in the html (i.e. under <ul>)
+      todoList.appendChild(todoDiv);
+    });
   }
 }
 
@@ -154,11 +191,23 @@ function removeLocalTodo(todo) {
     todoArray = JSON.parse(localStorage.getItem("todoArray"));
     const todoIndex = todoArray.indexOf(todo.children[0].innerText);
     todoArray.splice(todoIndex, 1); // index of the item to remove, and number (1) of el to rem.
-    localStorage.clear();
+    localStorage.removeItem("todoArray");
     localStorage.setItem("todoArray", JSON.stringify(todoArray));
   }
 }
 
+// storing checked todos in local storage
+
+function saveProgress(todo) {
+  const completedTodo = todo.children[0].innerText;
+  if (localStorage.getItem("progressArray") === null) {
+    progressArray = []; // if we don't have it, create a local array
+  } else {
+    progressArray = JSON.parse(localStorage.getItem("progressArray"));
+  }
+  progressArray.push(completedTodo); //then we are going to push the to do in local storage
+  localStorage.setItem("progressArray", JSON.stringify(progressArray));
+}
 /*
 Interestingly - function or arrow function.
 The difference between a function declaration and a function expression is that they are parsed at different times. The declaration is defined everywhere in its scope, whereas the expression is only defined when its line is reached.
