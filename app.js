@@ -82,7 +82,6 @@ function filterTodo(e) {
         todo.style.display = "flex"; // i.e. set css to display
         break;
       case "Completed":
-        console.log(todo.classList);
         if (todo.classList.contains("completed")) {
           todo.style.display = "flex";
         } else {
@@ -119,6 +118,7 @@ function saveLocalTodoArray(todo) {
 function loadLocalStorage() {
   // Check if I have existing todos in local storage
   let todoArray;
+  let progressArray;
   if (localStorage.getItem("todoArray") === null) {
     todoArray = []; // if we don't have it, create a local array
   } else {
