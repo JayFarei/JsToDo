@@ -115,11 +115,11 @@ select {
   -webkit-appearance: none;
   -moz-appearance: none;
   -webkit-border-radius: 0px;
+  border-radius: 0px;
   appearance: none;
   outline: none;
   border: none;
   font-size: 1rem;
-  font-family: "Inconsolata", monospace;
 }
 
 .select {
