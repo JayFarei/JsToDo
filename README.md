@@ -3,9 +3,10 @@
 A Javascript todo list application that manages the state of a task (from & to checked, delete) and allows for filtering. 
 All tasks are stored in local storage.
 
-Colour palette is ispired by Dracula theme.
+Colour palette is ispired by [Dracula theme](https://draculatheme.com/).
 
-Demo:
+**Demo:**
+
 ![alt](./img/JsToDo.gif)
 
 
