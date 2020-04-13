@@ -1,3 +1,5 @@
+import generateTodoHTML from "./generateTodoHTML.js";
+
 // SELECTORS
 const todoInput = document.querySelector(".todo-input");
 const todoButton = document.querySelector(".todo-button");
@@ -5,7 +7,7 @@ const todoList = document.querySelector(".todo-list");
 const filterOption = document.querySelector(".filter-todo");
 
 // EVENT LISTENERS
-document.addEventListener("DOMContentLoaded", loadLocalStorage); // loading local storage
+document.addEventListener("DOMContentLoaded", loadLocalStorage);
 todoButton.addEventListener("click", addTodo);
 todoList.addEventListener("click", deleteCheck);
 filterOption.addEventListener("change", filterTodo);
@@ -14,62 +16,47 @@ filterOption.addEventListener("change", filterTodo);
 
 // Adding a new todo, generating the HTML and calling the local storage function
 function addTodo(event) {
-  event.preventDefault(); // prevent refreshing every time
-
-  // generating div
-  const todoDiv = document.createElement("div");
-  todoDiv.classList.add("todo");
-
-  // generating LI
-  const newTodo = document.createElement("li");
-  newTodo.innerText = todoInput.value; // not sure what I am doing here
-  newTodo.classList.add("todo-item");
-  todoDiv.appendChild(newTodo); // appending the list under the todo div
-
+  console.log(event);
+  // prevent refreshing every time
+  event.preventDefault();
+  // generate todo HTML and append it to the <ul>
+  generateTodoHTML(todoList, todoInput.value, "uncompleted");
   // add todo to local storage
   saveLocalTodoArray(todoInput.value);
-
-  // generate check mark button
-  const completedButton = document.createElement("button");
-  completedButton.innerHTML = '<i class="fas fa-check-circle"></i>';
-  completedButton.classList.add("complete-btn");
-  todoDiv.appendChild(completedButton);
-
-  // generate a delete button
-  const trashButton = document.createElement("button");
-  trashButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-  trashButton.classList.add("trash-btn");
-  todoDiv.appendChild(trashButton);
-
-  // append my div to the existing list in the html (i.e. under <ul>)
-  todoList.appendChild(todoDiv);
+  // removing the todo from the input field
   todoInput.value = "";
+  location.reload(); // to force alignment in the array
 }
 
 // checking or removing todos from the list (html doc & local storage)
 function deleteCheck(event) {
   const item = event.target;
-  // DELETE TODO
-  if (item.classList[0] === "trash-btn") {
-    const todo = item.parentElement; // finding the parent element
-    // Animation
-    todo.classList.add("fall");
-    // Remove from local storage
-    removeLocalTodo(todo);
+  const todo = item.parentElement; // finding the parent element
+  switch (item.classList[0]) {
+    case "trash-btn":
+      // Animation css identifier
+      todo.classList.add("fall");
+      // Remove from local storage
+      removeLocalTodo(todo);
+      // Remove after the "transition" "end"
+      todo.addEventListener("transitionend", () => {
+        todo.remove();
+      });
+      break;
 
-    // Remove after the "transition" "end"
-
-    todo.addEventListener("transitionend", () => {
+    case "complete-btn":
+      generateTodoHTML(todoList, todo.children[0].innerText, "completed");
+      removeLocalTodo(todo);
+      saveProgress(todo);
       todo.remove();
-    });
-  }
+      break;
 
-  // Check
-  if (item.classList[0] === "complete-btn") {
-    const todo = item.parentElement;
-    todo.classList.toggle("completed");
-    saveProgress(todo);
-    removeLocalTodo(todo);
+    case "restore-btn":
+      generateTodoHTML(todoList, todo.children[0].innerText, "uncompleted");
+      removeLocalTodo(todo);
+      saveLocalTodoArray(todo.children[0].innerText);
+      todo.remove();
+      break;
   }
 }
 
@@ -82,6 +69,7 @@ function filterTodo(e) {
         todo.style.display = "flex"; // i.e. set css to display
         break;
       case "Completed":
+        console.log(todos);
         if (todo.classList.contains("completed")) {
           todo.style.display = "flex";
         } else {
@@ -100,115 +88,80 @@ function filterTodo(e) {
 }
 
 // storing unchecked in local storage
-function saveLocalTodoArray(todo) {
+function saveLocalTodoArray(todoValue) {
   // Check if I have existing todos in local storage
   let todoArray;
-  if (localStorage.getItem("todoArray") === null) {
+  if (localStorage.getItem("uncompletedArray") === null) {
     todoArray = []; // if we don't have it, create a local array
   } else {
-    todoArray = JSON.parse(localStorage.getItem("todoArray"));
+    todoArray = JSON.parse(localStorage.getItem("uncompletedArray"));
     // if we have them we'll get an array
   }
   // in both cases above i'll end up with an array
-  todoArray.push(todo); //then we are going to push the to do in local storage
-  localStorage.setItem("todoArray", JSON.stringify(todoArray));
+  todoArray.push(todoValue); //then we are going to push the to do in local storage
+  localStorage.setItem("uncompletedArray", JSON.stringify(todoArray));
 }
 
 // load both unchecked and checked items
 function loadLocalStorage() {
-  // Check if I have existing todos in local storage
+  // LOADING UNCHECKED
+  // Check if I have existing uncompleted todos in local storage
   let todoArray;
-  let progressArray;
-  if (localStorage.getItem("todoArray") === null) {
+  if (localStorage.getItem("uncompletedArray") === null) {
     todoArray = []; // if we don't have it, create a local array
   } else {
     // loading local arrays
-    todoArray = JSON.parse(localStorage.getItem("todoArray"));
-    progressArray = JSON.parse(localStorage.getItem("progressArray"));
-
+    todoArray = JSON.parse(localStorage.getItem("uncompletedArray"));
     // Defining Array of unfinished items
-
     todoArray.forEach((localTodoItem) => {
-      // generating div
-      const todoDiv = document.createElement("div");
-      todoDiv.classList.add("todo");
-
-      // generating LI
-      const newTodo = document.createElement("li");
-      newTodo.innerText = localTodoItem; // not sure what I am doing here
-      newTodo.classList.add("todo-item");
-      todoDiv.appendChild(newTodo); // appending the list under the todo div
-
-      // generate check mark button
-      const completedButton = document.createElement("button");
-      completedButton.innerHTML = '<i class="fas fa-check-circle"></i>';
-      completedButton.classList.add("complete-btn");
-      todoDiv.appendChild(completedButton);
-
-      // generate a delete button
-      const trashButton = document.createElement("button");
-      trashButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-      trashButton.classList.add("trash-btn");
-      todoDiv.appendChild(trashButton);
-
-      // append my div to the existing list in the html (i.e. under <ul>)
-      todoList.appendChild(todoDiv);
+      generateTodoHTML(todoList, localTodoItem, "uncompleted");
     });
-
+  }
+  // LOADING CHECKED
+  // Check if I have existing completed todos in local storage
+  let progressArray;
+  if (localStorage.getItem("completedArray") === null) {
+    progressArray = [];
+  } else {
+    // loading local arrays
+    progressArray = JSON.parse(localStorage.getItem("completedArray"));
     progressArray.forEach((localTodoItem) => {
-      // generating div
-      const todoDiv = document.createElement("div");
-      todoDiv.classList.add("todo");
-
-      // generating LI
-      const newTodo = document.createElement("li");
-      newTodo.innerText = localTodoItem; // not sure what I am doing here
-      newTodo.classList.add("todo-item");
-      newTodo.classList.toggle("completed");
-      todoDiv.appendChild(newTodo); // appending the list under the todo div
-
-      // generate check mark button
-      const completedButton = document.createElement("button");
-      completedButton.innerHTML = '<i class="fas fa-check-circle"></i>';
-      completedButton.classList.add("complete-btn");
-      todoDiv.appendChild(completedButton);
-
-      // generate a delete button
-      const trashButton = document.createElement("button");
-      trashButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-      trashButton.classList.add("trash-btn");
-      todoDiv.appendChild(trashButton);
-
-      // append my div to the existing list in the html (i.e. under <ul>)
-      todoList.appendChild(todoDiv);
+      generateTodoHTML(todoList, localTodoItem, "completed");
     });
   }
 }
 
+// removing todos from either storage location
 function removeLocalTodo(todo) {
+  /*
+  todo: string representing the item
+  localArray: storage option ("todoArray", "progressArray")
+  */
+  const todoToRemove = todo.children[0].innerText;
+  const localStorageName = todo.classList[1] + "Array";
   let todoArray;
-  if (localStorage.getItem("todoArray") != null) {
-    todoArray = JSON.parse(localStorage.getItem("todoArray"));
-    const todoIndex = todoArray.indexOf(todo.children[0].innerText);
-    todoArray.splice(todoIndex, 1); // index of the item to remove, and number (1) of el to rem.
-    localStorage.removeItem("todoArray");
-    localStorage.setItem("todoArray", JSON.stringify(todoArray));
+  if (localStorage.getItem(localStorageName) != null) {
+    todoArray = JSON.parse(localStorage.getItem(localStorageName));
+    const todoIndex = todoArray.indexOf(todoToRemove);
+    todoArray.splice(todoIndex, 1);
+    // index of the item to remove, and number (1) of el to rem.
+    localStorage.removeItem(localStorageName);
+    localStorage.setItem(localStorageName, JSON.stringify(todoArray));
   }
 }
 
 // storing checked todos in local storage
 
 function saveProgress(todo) {
-  const completedTodo = todo.children[0].innerText;
-  if (localStorage.getItem("progressArray") === null) {
+  const todoCompleted = todo.children[0].innerText;
+  const localStorageName = "completedArray";
+  console.log(localStorageName);
+  let progressArray = [];
+  if (localStorage.getItem(localStorageName) === null) {
     progressArray = []; // if we don't have it, create a local array
   } else {
-    progressArray = JSON.parse(localStorage.getItem("progressArray"));
+    progressArray = JSON.parse(localStorage.getItem(localStorageName));
   }
-  progressArray.push(completedTodo); //then we are going to push the to do in local storage
-  localStorage.setItem("progressArray", JSON.stringify(progressArray));
+  progressArray.push(todoCompleted); //then we are going to push the to do in local storage
+  localStorage.setItem(localStorageName, JSON.stringify(progressArray));
 }
-/*
-Interestingly - function or arrow function.
-The difference between a function declaration and a function expression is that they are parsed at different times. The declaration is defined everywhere in its scope, whereas the expression is only defined when its line is reached.
-*/
