@@ -25,7 +25,7 @@ function addTodo(event) {
   saveLocalTodoArray(todoInput.value);
   // removing the todo from the input field
   todoInput.value = "";
-  location.reload(); // to force alignment in the array
+  // location.reload(); // to force alignment in the array
 }
 
 // checking or removing todos from the list (html doc & local storage)
