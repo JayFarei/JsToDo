@@ -17,26 +17,26 @@
   </head>
   <body>
     <header>
-      <h1>~/Ally-G/Todo_list</h1>
+      <h1>Vanilla JS Todo List</h1>
     </header>
-    <div class="wrapper">
-      <form>
-        <input type="text" class="todo-input" />
-        <button class="todo-button" type="submit">
-          <i class="fas fa-plus-square"></i>
-        </button>
-        <div class="select">
-          <select name="todos" class="filter-todo">
-            <option value="All">All</option>
-            <option value="Completed">Completed</option>
-            <option value="Uncompleted">Uncompleted</option>
-          </select>
-        </div>
-      </form>
-      <div class="todo-container">
-        <ul class="todo-list"></ul>
+    <form>
+      <input type="text" class="todo-input" />
+      <button class="todo-button" type="submit">
+        <i class="fas fa-plus-square"></i>
+      </button>
+      <div class="select">
+        <select name="todos" class="filter-todo">
+          <option value="All">All</option>
+          <option value="Completed">Completed</option>
+          <option value="Uncompleted">Uncompleted</option>
+        </select>
       </div>
+    </form>
+    <div class="todo-container">
+      <ul class="todo-list"></ul>
     </div>
-    <script src="./app.js"></script>
+
+    <script type="module" src="./app.js"></script>
+    <script type="module" src="./generateTodoHTML.js"></script>
   </body>
 </html>
