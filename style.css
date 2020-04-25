@@ -29,7 +29,7 @@ form {
 /*********** INPUT SECTION START ***********/
 form {
   /* overriding with space-between to space them out and near the edges*/
-  justify-content: space-between;
+  justify-content: space-around;
   width: 100%;
 }
 
@@ -61,7 +61,7 @@ form input {
 /* div wrapping together form & todo container */
 #interface {
   align-items: center;
-  width: 60%;
+  width: 600px;
   margin: 1rem auto;
 }
 
