@@ -16,7 +16,7 @@ filterOption.addEventListener("change", filterTodo);
 
 // Adding a new todo, generating the HTML and calling the local storage function
 function addTodo(event) {
-  console.log(event);
+  // console.log(event);
   // prevent refreshing every time
   event.preventDefault();
   // generate todo HTML and append it to the <ul>
