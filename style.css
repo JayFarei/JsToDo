@@ -1,21 +1,23 @@
+/* Resetting default CSS*/
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  font-size: 14;
 }
 
 body {
   background: #282a36;
   color: #6172a4;
   font-family: "Inconsolata", monospace;
-  min-height: 100vh;
+  min-height: 100vh; /*100% window*/
 }
 
 header {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-family: "Inconsolata", monospace;
 }
 
+/* setting flex & minimum height */
 header,
 form {
   min-height: 20vh;
@@ -24,8 +26,16 @@ form {
   align-items: center;
 }
 
+/*********** INPUT SECTION START ***********/
+form {
+  /* overriding with space-between to space them out and near the edges*/
+  justify-content: space-between;
+  width: 100%;
+}
+
 form input,
-form button {
+form button,
+select {
   padding: 0.5rem;
   font-size: 2rem;
   border: none;
@@ -39,14 +49,84 @@ form button {
   transition: all 0.3s ease;
 }
 
-form input {
-  color: #282a36;
-}
-
 form button:hover {
   background: #50fa7b;
   color: white;
 }
+
+form input {
+  color: #282a36;
+}
+
+/* div wrapping together form & todo container */
+#interface {
+  align-items: center;
+  width: 60%;
+  margin: 1rem auto;
+}
+
+#input-select {
+  width: 100%;
+  display: inline-flex;
+  justify-content: space-between;
+}
+
+/* div wrapping together input and submit button*/
+#input-elements {
+  display: inline-flex;
+  align-items: left; /* making the button close to the input */
+}
+
+/*input field*/
+.todo-input {
+  padding: 0.1rem 0.1rem;
+}
+
+/* input button */
+.todo-button {
+  margin-left: 0;
+  padding: 0.5rem 0.7rem;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
+  appearance: none;
+  outline: none;
+  border: none;
+  font-size: 1rem;
+}
+
+.select {
+  display: flex;
+  margin-left: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+select {
+  color: #282a36;
+  width: 10rem;
+  cursor: pointer;
+  padding: 1rem;
+}
+
+.select::after {
+  content: "\25BC";
+  background: #8be9fd;
+  padding: 1rem;
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+.select:hover::after {
+  background: #8be9fd;
+  color: white;
+}
+
+/************ INPUT SECTION END ************/
 
 .todo-container {
   display: flex;
@@ -57,10 +137,11 @@ form button:hover {
 .todo-list {
   min-width: 30%;
   list-style: none;
+  width: 100%;
 }
 
 .todo {
-  margin: 0.5rem;
+  margin: 0.5rem 0;
   background: white;
   font-size: 1.5rem;
   display: flex;
@@ -110,46 +191,4 @@ form button:hover {
 .fall {
   transform: translateY(15rem) rotateZ(20deg);
   opacity: 0;
-}
-
-/* remove default styling */
-
-select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  -webkit-border-radius: 0px;
-  border-radius: 0px;
-  appearance: none;
-  outline: none;
-  border: none;
-  font-size: 1rem;
-}
-
-.select {
-  margin: 1rem;
-  position: relative;
-  overflow: hidden;
-}
-
-select {
-  color: #282a36;
-  width: 10rem;
-  cursor: pointer;
-  padding: 1rem;
-}
-
-.select::after {
-  content: "\25BC";
-  position: absolute;
-  background: #8be9fd;
-  top: 0;
-  right: 0;
-  padding: 1rem;
-  pointer-events: none;
-  transition: all 0.2s ease;
-}
-
-.select:hover::after {
-  background: white;
-  color: #8be9fd;
 }
