@@ -61,7 +61,7 @@ form input {
 /* div wrapping together form & todo container */
 #interface {
   align-items: center;
-  width: 600px;
+  max-width: 600px;
   margin: 1rem auto;
 }
 
